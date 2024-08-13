@@ -52,7 +52,7 @@ const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
       }
       return { id: component.id };
     },
-    end: (item, monitor) => {
+    end: (_item: any, monitor: any) => {
       const dropResult = monitor.getDropResult();
       if (!dropResult && isDragging) {
         // The component was dragged outside of any drop target

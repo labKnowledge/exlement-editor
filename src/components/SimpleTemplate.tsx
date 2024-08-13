@@ -1,7 +1,7 @@
 import React from "react";
 import { Grid, Typography, Box } from "@mui/material";
 
-const SimpleLayout = () => {
+const SimpleLayout: React.FC = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
