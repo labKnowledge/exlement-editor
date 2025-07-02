@@ -97,6 +97,24 @@ const ExportModal: React.FC<ExportModalProps> = ({
         >
           Copy to Clipboard
         </Button>
+        <Button
+          onClick={() => {
+            const blob = new Blob([generateHTML()], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'exlement_export.html';
+            document.body.appendChild(a);
+            a.click();
+            setTimeout(() => {
+              document.body.removeChild(a);
+              URL.revokeObjectURL(url);
+            }, 0);
+          }}
+          color="primary"
+        >
+          Download File
+        </Button>
       </DialogActions>
     </Dialog>
   );

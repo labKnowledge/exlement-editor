@@ -104,7 +104,11 @@ export const componentGroups = [
         type: "page-layout",
         name: "Layout",
         isContainer: true,
-        props: { column: "2", options: "{}", "custom-css": "{}" },
+        props: {
+          column: "2",
+          options: "{ 'gap': '24px', 'align': 'stretch', 'justify': 'space-between', 'padding': '2rem', 'background': '#f9f9f9' }",
+          "custom-css": "{ 'borderRadius': '8px', 'boxShadow': '0 2px 8px rgba(0,0,0,0.05)' }"
+        },
       },
       {
         type: "page-card-layout",
@@ -112,10 +116,10 @@ export const componentGroups = [
         isContainer: true,
         props: { columns: "3", "min-card-width": "250px" },
       },
-      { type: "page-card", name: "Page Card", isContainer: true, props: {} },
+      { type: "page-card", name: "Card", isContainer: true, props: {} },
       {
         type: "page-tabs",
-        name: "Page Tabs",
+        name: "Tabs",
         isContainer: false,
         props: {
           tabs: "[{'title': 'Tab 1', 'content': '<p>Content for tab 1</p>'}, {'title': 'Tab 2', 'content': '<p>Content for tab 2</p>'}, {'title': 'Tab 3', 'content': '<p>Content for tab 3</p>'}]",
@@ -124,7 +128,7 @@ export const componentGroups = [
       },
       {
         type: "page-nav-menu",
-        name: "Page Nav Menu",
+        name: "Nav Menu",
         isContainer: false,
         props: {
           items:
@@ -137,7 +141,7 @@ export const componentGroups = [
       },
       {
         type: "page-image-gallery",
-        name: "Page Image Gallery",
+        name: "Image Gallery",
         isContainer: false,
         props: {
           layout: "grid",
@@ -154,7 +158,7 @@ export const componentGroups = [
     components: [
       {
         type: "page-proofreader",
-        name: "Page Proofreader",
+        name: "Proofreader",
         isContainer: false,
         props: {
           "ai-type": "openai",
@@ -165,7 +169,7 @@ export const componentGroups = [
       },
       {
         type: "page-content-generator",
-        name: "Page Content Generator",
+        name: "Content Generator",
         isContainer: false,
         props: {
           "server-url": "",
@@ -176,7 +180,7 @@ export const componentGroups = [
       },
       {
         type: "page-chat",
-        name: "Page Chat",
+        name: "Chat",
         isContainer: false,
         props: {
           "server-url": "",
@@ -187,7 +191,7 @@ export const componentGroups = [
       },
       {
         type: "page-ai-code-editor",
-        name: "Page AI Code Editor",
+        name: "AI Code Editor",
         isContainer: false,
         props: {
           "ai-type": "openai",
@@ -198,7 +202,7 @@ export const componentGroups = [
       },
       {
         type: "page-translator",
-        name: "Page Translator",
+        name: "Translator",
         isContainer: false,
         props: { data: "{}", options: "{}", model: "" },
       },
@@ -209,7 +213,7 @@ export const componentGroups = [
     components: [
       {
         type: "page-tx-generator",
-        name: "Page TX Generator",
+        name: "TX Generator",
         isContainer: false,
         props: {
           model: "Xenova/LaMini-Flan-T5-783M",
@@ -219,7 +223,7 @@ export const componentGroups = [
       },
       {
         type: "page-tx-speech-to-text",
-        name: "Page TX Speech to Text",
+        name: "TX Speech to Text",
         isContainer: false,
         props: {
           options:
@@ -229,7 +233,7 @@ export const componentGroups = [
       },
       {
         type: "page-tx-image-captioner",
-        name: "Page TX Image Captioner",
+        name: "TX Image Captioner",
         isContainer: false,
         props: {
           model: "",
@@ -239,7 +243,7 @@ export const componentGroups = [
       },
       {
         type: "page-tx-chat",
-        name: "Page TX Chat",
+        name: "TX Chat",
         isContainer: false,
         props: {
           model: "Xenova/LaMini-Flan-T5-783M",
@@ -251,7 +255,7 @@ export const componentGroups = [
       },
       {
         type: "page-txonn-chat",
-        name: "Page TXONN Chat",
+        name: "TXONN Chat",
         isContainer: false,
         props: {
           model: "Xenova/LaMini-Flan-T5-783M",
@@ -263,7 +267,7 @@ export const componentGroups = [
       },
       {
         type: "page-voice-ai-assistant",
-        name: "Page Voice AI Assistant",
+        name: "Voice AI Assistant",
         isContainer: false,
         props: {
           model: "Xenova/LaMini-Flan-T5-783M",

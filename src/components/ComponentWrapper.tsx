@@ -9,74 +9,94 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 interface ComponentWrapperProps {
   component: ComponentData;
+  index: number;
+  parentId: string | null;
   onSelect: () => void;
   onDrop: (item: any, parentId: string) => void;
   onMove: (draggedId: string, targetId: string) => void;
-  onMoveToIndex: (draggedId: string, parentId: string, index: number) => void;
+  onMoveToIndex: (draggedId: string, parentId: string | null, index: number) => void;
   onDelete: (componentId: string) => void;
   children?: React.ReactNode;
 }
 
 const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
   component,
+  index,
+  parentId,
   onSelect,
   onDrop,
-  onMove,
   onMoveToIndex,
   onDelete,
   children,
 }) => {
-  
-    
-    const [{ isDragging }, drag] = useDrag(() => ({
-      type: "COMPONENT",
-      item: {
-        id: component.id,
-        type: component.type,
-        isContainer: component.isContainer,
-        children: component.children,
-      },
-      collect: (monitor) => ({
-        isDragging: !!monitor.isDragging(),
-      }),
-    }));
+  const ref = React.useRef<HTMLDivElement>(null);
 
-  const [{ isOver, canDrop }, drop] = useDrop(() => ({
-    accept: "COMPONENT",
-    canDrop: () => component.isContainer,
-    drop: (item: any, monitor) => {
-      const didDrop = monitor.didDrop();
-      if (didDrop) {
-        return;
-      }
-      if (item.id) {
-        onMove(item.id, component.id);
-      } else {
-        onDrop(item, component.id);
-      }
-      return { id: component.id };
-    },
-    end: (_item: any, monitor: any) => {
-      const dropResult = monitor.getDropResult();
-      if (!dropResult && isDragging) {
-        // The component was dragged outside of any drop target
-        onDelete(component.id);
-      }
-    },
+  const [{ isDragging }, drag] = useDrag({
+    type: "COMPONENT",
+    item: { id: component.id, index, parentId },
     collect: (monitor) => ({
-      isOver: !!monitor.isOver({ shallow: true }),
-      canDrop: !!monitor.canDrop(),
+      isDragging: !!monitor.isDragging(),
     }),
-  }));
+  });
 
-  // Helper for drop zones between children
-  const DropZone: React.FC<{ index: number }> = ({ index }) => {
+  const [, drop] = useDrop({
+    accept: "COMPONENT",
+    hover(item: any, monitor) {
+      if (!ref.current) return;
+      const dragIndex = item.index;
+      const hoverIndex = index;
+      const dragParentId = item.parentId;
+      // Only move if not the same index and same parent
+      if (dragIndex === hoverIndex && parentId === dragParentId) return;
+      // Determine rectangle on screen
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+      // Get vertical middle
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) return;
+      // Get pixels to the top
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+      // Only perform the move when the mouse has crossed half of the item's height
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) return;
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) return;
+      // Move the item
+      onMoveToIndex(item.id, parentId, hoverIndex);
+      item.index = hoverIndex;
+      item.parentId = parentId;
+    },
+  });
+
+  drag(drop(ref));
+
+  // Ensure children is always an array
+  const childrenArray = React.Children.toArray(children);
+
+  // Drop zone at the end of the container for new elements or moving existing ones to the end
+  const EndDropZone: React.FC = () => {
     const [{ isOver, canDrop }, drop] = useDrop({
       accept: "COMPONENT",
+      canDrop: (item: any) => {
+        // Only allow drop if this is a container and not dropping into itself or its descendants
+        if (!component.isContainer) return false;
+        if (item.id === component.id) return false;
+        let isDescendant = false;
+        function checkDescendants(c: ComponentData) {
+          if (c.children.some(child => child.id === item.id)) {
+            isDescendant = true;
+          } else {
+            c.children.forEach(child => checkDescendants(child));
+          }
+        }
+        checkDescendants(component);
+        return !isDescendant;
+      },
       drop: (item: any) => {
         if (item.id) {
-          onMoveToIndex(item.id, component.id, index);
+          // Move existing component to the end
+          onMoveToIndex(item.id, component.id, childrenArray.length);
         } else {
+          // Add new component from palette
           onDrop(item, component.id);
         }
       },
@@ -89,20 +109,25 @@ const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
       <Box
         ref={drop}
         sx={{
-          height: 12,
+          height: 24,
           backgroundColor: isOver && canDrop ? 'primary.light' : 'transparent',
           transition: 'background 0.2s',
-          my: 0.5,
+          my: 1,
           borderRadius: 1,
-          cursor: 'pointer',
+          cursor: canDrop ? 'pointer' : 'not-allowed',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
         }}
-      />
+      >
+        {isOver && canDrop ? 'Drop here' : ''}
+      </Box>
     );
   };
 
   return (
     <Box
-      ref={(node: any) => drag(drop(node))}
+      ref={ref}
       component={Paper}
       elevation={2}
       sx={{
@@ -111,9 +136,8 @@ const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
         padding: 1,
         cursor: "move",
         opacity: isDragging ? 0.5 : 1,
-        backgroundColor:
-          isOver && canDrop ? "action.hover" : "background.paper",
-        border: isOver && canDrop ? "2px dashed" : "2px solid transparent",
+        backgroundColor: "background.paper",
+        border: "2px solid transparent",
         borderColor: "primary.main",
         minHeight: component.isContainer ? "100px" : "auto",
       }}
@@ -145,13 +169,8 @@ const ComponentWrapper: React.FC<ComponentWrapperProps> = ({
             borderRadius: 1,
           }}
         >
-          {/* Render drop zones and children */}
-          {React.Children.map(children, (child, idx) => [
-            <DropZone key={`dz-${idx}`} index={idx} />,
-            child
-          ])}
-          {/* Drop zone after last child */}
-          <DropZone key={`dz-end`} index={React.Children.count(children)} />
+          {childrenArray}
+          <EndDropZone />
         </Box>
       )}
     </Box>

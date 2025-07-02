@@ -142,37 +142,18 @@ const App: React.FC = () => {
   };
 
   // Handler for moving components to a specific index among siblings
-  const handleMoveComponentToIndex = (draggedId: string, parentId: string | null, index: number) => {
+  const handleMoveComponentToIndex = (draggedId: string, parentId: string | null, hoverIndex: number) => {
     setComponents((prevComponents) => {
-      const draggedComponent = prevComponents.find((c) => c.id === draggedId);
-      if (!draggedComponent) return prevComponents;
-
-      // Remove from old parent's children
-      const removeFromParent = (components: ComponentData[]): ComponentData[] => {
-        return components.map((component) => {
-          if (component.children.some((child) => child.id === draggedId)) {
-            return {
-              ...component,
-              children: component.children.filter((child) => child.id !== draggedId),
-            };
-          } else if (component.children.length > 0) {
-            return {
-              ...component,
-              children: removeFromParent(component.children),
-            };
-          }
-          return component;
-        });
-      };
-
-      let updatedComponents = removeFromParent(prevComponents);
-
-      // Add to new parent's children at the specified index
-      const addToParentAtIndex = (components: ComponentData[]): ComponentData[] => {
+      // Find the parent (or root if parentId is null)
+      const updateChildren = (components: ComponentData[]): ComponentData[] => {
         return components.map((component) => {
           if ((parentId === null && component.parent === null) || component.id === parentId) {
+            // Find the index of the dragged child
+            const dragIndex = component.children.findIndex((child) => child.id === draggedId);
+            if (dragIndex === -1) return component;
             const newChildren = [...component.children];
-            newChildren.splice(index, 0, draggedComponent);
+            const [removed] = newChildren.splice(dragIndex, 1);
+            newChildren.splice(hoverIndex, 0, removed);
             return {
               ...component,
               children: newChildren,
@@ -180,21 +161,13 @@ const App: React.FC = () => {
           } else if (component.children.length > 0) {
             return {
               ...component,
-              children: addToParentAtIndex(component.children),
+              children: updateChildren(component.children),
             };
           }
           return component;
         });
       };
-
-      updatedComponents = addToParentAtIndex(updatedComponents);
-
-      // Update the parent property of the dragged component
-      updatedComponents = updatedComponents.map((c) =>
-        c.id === draggedId ? { ...c, parent: parentId } : c
-      );
-
-      return updatedComponents;
+      return updateChildren(prevComponents);
     });
   };
 

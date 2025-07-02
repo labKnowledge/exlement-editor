@@ -40,19 +40,21 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
     },
   }));
 
-  const renderComponent = (component: ComponentData) => (
+  const renderComponent = (component: ComponentData, index: number, parentId: string | null) => (
     <ComponentWrapper
       key={component.id}
       component={component}
+      index={index}
+      parentId={parentId}
       onSelect={() => onSelectComponent(component)}
       onDrop={onDrop}
       onMove={onMoveComponent}
       onMoveToIndex={onMoveComponentToIndex}
       onDelete={onDeleteComponent}
     >
-      {component.children.map((childId) => {
+      {component.children.map((childId, idx) => {
         const childComponent = components.find((c) => c.id === childId.id);
-        return childComponent ? renderComponent(childComponent) : null;
+        return childComponent ? renderComponent(childComponent, idx, component.id) : null;
       })}
     </ComponentWrapper>
   );
@@ -74,7 +76,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       {/* {components.filter((c) => c.parent === null).map(renderComponent)} */}
       {components
         .filter((c) => c.parent === null)
-        .map((c) => renderComponent(c))}
+        .map((c, idx) => renderComponent(c, idx, null))}
     </Box>
   );
 };
