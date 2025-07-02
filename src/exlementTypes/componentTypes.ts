@@ -3,10 +3,10 @@ export const componentGroups = [
   {
     name: "Basic",
     components: [
-      { type: "page-base", name: "Page Base", isContainer: true, props: {} },
+      { type: "page-base", name: "Main Page", isContainer: true, props: {} },
       {
         type: "page-top",
-        name: "Page Top",
+        name: "Top Navbar",
         isContainer: false,
         props: {
           data: "{'logo': '../assets/imgs/express_element-logo.jpeg', 'links': [{'text': 'Home', 'url': '#home'}, {'text': 'About', 'url': '#about'}, {'text': 'Contact', 'url': '#contact'}]}",
@@ -16,7 +16,7 @@ export const componentGroups = [
       },
       {
         type: "page-bottom",
-        name: "Page Bottom",
+        name: "Footer",
         isContainer: false,
         props: {
           data: "{'copyright': '2024 Exlement', 'links': [{'text': 'Privacy', 'url': '/privacy'}, {'text': 'Terms', 'url': '/terms'}]}",
@@ -26,19 +26,19 @@ export const componentGroups = [
       },
       {
         type: "page-content",
-        name: "Page Content",
+        name: "Content",
         isContainer: false,
         props: { level: "1", text: "" },
       },
       {
         type: "page-image-content",
-        name: "Page Image Content",
+        name: "Image Content",
         isContainer: false,
         props: { data: "{}", option: "{}" },
       },
       {
         type: "page-product-info",
-        name: "Page Product Info",
+        name: "Product Info",
         isContainer: false,
         props: {
           data: "{'image': 'https://unpkg.com/exlement@1.0.2/assets/imgs/basic.png', 'title': 'Rapid Development', 'text': 'Build feature-rich web applications in record time with our intuitive, HTML-like syntax and pre-built components.', 'buttonText': 'Learn More'}",
@@ -48,13 +48,13 @@ export const componentGroups = [
       },
       {
         type: "page-team",
-        name: "Page Team",
+        name: "Team",
         isContainer: false,
         props: { data: "[]", options: "{}" },
       },
       {
         type: "page-testimonial",
-        name: "Page Testimonial",
+        name: "Testimonial",
         isContainer: false,
         props: {
           data: "{'image': 'https://unpkg.com/exlement@1.0.0/assets/imgs/express_element-logo.jpeg', 'quote': 'Exlement has transformed our development process. We're building sophisticated web applications faster than ever, and the AI-powered components have significantly improved our productivity.', 'name': 'Jane Doe', 'role': 'Senior Web Developer'}",
@@ -63,7 +63,7 @@ export const componentGroups = [
       },
       {
         type: "page-heading",
-        name: "Page Heading",
+        name: "Heading",
         isContainer: false,
         props: {
           subtitle: "",
@@ -90,25 +90,25 @@ export const componentGroups = [
     components: [
       {
         type: "page-container",
-        name: "Page Container",
+        name: "Container",
         isContainer: true,
         props: {},
       },
       {
         type: "page-column",
-        name: "Page Column",
+        name: "Column",
         isContainer: true,
         props: { width: "50%" },
       },
       {
         type: "page-layout",
-        name: "Page Layout",
+        name: "Layout",
         isContainer: true,
         props: { column: "2", options: "{}", "custom-css": "{}" },
       },
       {
         type: "page-card-layout",
-        name: "Page Card Layout",
+        name: "Card Layout",
         isContainer: true,
         props: { columns: "3", "min-card-width": "250px" },
       },

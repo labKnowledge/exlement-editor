@@ -10,6 +10,7 @@ interface EditorCanvasProps {
   onDrop: (item: any, parentId: string | null) => void;
   onSelectComponent: (component: ComponentData) => void;
   onMoveComponent: (draggedId: string, targetId: string | null) => void;
+  onMoveComponentToIndex: (draggedId: string, parentId: string | null, index: number) => void;
   onDeleteComponent: (componentID: string) => void
 }
 
@@ -18,6 +19,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
   onDrop,
   onSelectComponent,
   onMoveComponent,
+  onMoveComponentToIndex,
   onDeleteComponent,
 }) => {
     
@@ -45,6 +47,7 @@ const EditorCanvas: React.FC<EditorCanvasProps> = ({
       onSelect={() => onSelectComponent(component)}
       onDrop={onDrop}
       onMove={onMoveComponent}
+      onMoveToIndex={onMoveComponentToIndex}
       onDelete={onDeleteComponent}
     >
       {component.children.map((childId) => {

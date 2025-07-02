@@ -141,6 +141,63 @@ const App: React.FC = () => {
     });
   };
 
+  // Handler for moving components to a specific index among siblings
+  const handleMoveComponentToIndex = (draggedId: string, parentId: string | null, index: number) => {
+    setComponents((prevComponents) => {
+      const draggedComponent = prevComponents.find((c) => c.id === draggedId);
+      if (!draggedComponent) return prevComponents;
+
+      // Remove from old parent's children
+      const removeFromParent = (components: ComponentData[]): ComponentData[] => {
+        return components.map((component) => {
+          if (component.children.some((child) => child.id === draggedId)) {
+            return {
+              ...component,
+              children: component.children.filter((child) => child.id !== draggedId),
+            };
+          } else if (component.children.length > 0) {
+            return {
+              ...component,
+              children: removeFromParent(component.children),
+            };
+          }
+          return component;
+        });
+      };
+
+      let updatedComponents = removeFromParent(prevComponents);
+
+      // Add to new parent's children at the specified index
+      const addToParentAtIndex = (components: ComponentData[]): ComponentData[] => {
+        return components.map((component) => {
+          if ((parentId === null && component.parent === null) || component.id === parentId) {
+            const newChildren = [...component.children];
+            newChildren.splice(index, 0, draggedComponent);
+            return {
+              ...component,
+              children: newChildren,
+            };
+          } else if (component.children.length > 0) {
+            return {
+              ...component,
+              children: addToParentAtIndex(component.children),
+            };
+          }
+          return component;
+        });
+      };
+
+      updatedComponents = addToParentAtIndex(updatedComponents);
+
+      // Update the parent property of the dragged component
+      updatedComponents = updatedComponents.map((c) =>
+        c.id === draggedId ? { ...c, parent: parentId } : c
+      );
+
+      return updatedComponents;
+    });
+  };
+
   // Handler for updating component properties
   const handleUpdateComponent = (updatedComponent: ComponentData) => {
     setComponents((prevComponents) =>
@@ -282,6 +339,7 @@ const App: React.FC = () => {
                           onDrop={handleDrop}
                           onSelectComponent={setSelectedComponent}
                           onMoveComponent={handleMoveComponent}
+                          onMoveComponentToIndex={handleMoveComponentToIndex}
                           onDeleteComponent={handleDeleteComponent}
                         />
                       </Box>
